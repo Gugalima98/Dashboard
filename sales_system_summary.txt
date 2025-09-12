@@ -1,0 +1,52 @@
+Resumo do Sistema de Vendas:
+
+O que foi feito:
+
+1.  Integração do Webhook Kiwify:
+    *   Implementada uma Supabase Edge Function (`sales-webhook/index.ts`) para receber eventos de webhook da Kiwify.
+    *   Dados de vendas da Kiwify normalizados para uma interface `NormalizedSale`.
+    *   Tratamento de vários tipos de eventos da Kiwify:
+        *   Compra aprovada (`order_approved`, `paid`)
+        *   Boleto gerado (`billet_created`)
+        *   Pix gerado (`pix_created`)
+        *   Carrinho abandonado (`CARRINHO ABANDONADO`)
+        *   Compra recusada (`order_rejected`)
+        *   Reembolso (`order_refunded`)
+        *   Chargeback (`chargeback`)
+        *   Assinatura cancelada (`subscription_canceled`)
+        *   Assinatura atrasada (`subscription_late`)
+        *   Assinatura renovada (`subscription_renewed`)
+    *   Garantido que `product_id`, `product_name`, `product_price`, `payment_method`, `customer_name`, `customer_email`, `amount`, `status`, `source`, `platform_fee`, `external_id` e `created_at` sejam extraídos e preenchidos corretamente.
+    *   Implementada lógica para evitar nomes de produtos duplicados na tabela `products`, verificando produtos existentes pelo nome e usando seu `id`.
+    *   Tratado `amount: 0` para carrinhos abandonados para evitar violações de restrição `NOT NULL`.
+    *   Resolvidos vários problemas de depuração (autenticação, restrições de chave estrangeira, mapeamento de `product_id`, valores nulos de `amount`).
+
+2.  Melhorias no Frontend (Dashboard):
+    *   Adicionado filtro de intervalo de datas ao Dashboard de Vendas (`VendasDashboard.tsx`).
+    *   Adicionado filtro de produto ao Dashboard de Vendas (`VendasDashboard.tsx`).
+    *   Corrigidos os estados ativo/hover do menu em `AppSidebar.tsx`.
+
+
+O que precisa ser feito para terminar o sistema de vendas:
+
+1.  Integração do Webhook Stripe:
+    *   Implementar lógica em `sales-webhook/index.ts` para lidar com eventos de webhook do Stripe.
+    *   Identificar tipos de eventos relevantes do Stripe (por exemplo, `checkout.session.completed`, `charge.succeeded`, `charge.refunded`, `invoice.payment_succeeded`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`).
+    *   Criar funções de tratamento correspondentes (por exemplo, `handleStripeCheckoutCompleted`, `handleStripeChargeSucceeded`, `handleStripeChargeRefunded`).
+    *   Normalizar dados do Stripe para a interface `NormalizedSale`.
+    *   Implementar verificação de assinatura do Stripe para segurança.
+    *   Garantir que `product_id`, `product_name`, `product_price`, `payment_method`, etc., sejam extraídos corretamente dos payloads do Stripe.
+    *   Testar a integração do webhook do Stripe com payloads de exemplo.
+
+2.  Gerenciamento de Assinaturas (Refinamento):
+    *   Para eventos de assinatura da Kiwify e do Stripe, considerar a implementação de lógica mais sofisticada para atualizar registros de assinatura existentes em uma tabela `subscriptions` dedicada, em vez de apenas inserir novas vendas. Isso envolveria:
+        *   Criação de um esquema de tabela `subscriptions`.
+        *   Modificação das funções de tratamento para verificar assinaturas existentes e atualizar seu status (por exemplo, `active`, `canceled`, `overdue`).
+        *   Vinculação de registros de vendas a registros de assinatura.
+
+3.  Tratamento de Erros e Logs:
+    *   Revisar e aprimorar o tratamento de erros e o registro de logs dentro da função `sales-webhook` para melhor depuração e monitoramento.
+
+4.  Frontend (Outras Melhorias):
+    *   Garantir que todos os novos pontos de dados (por exemplo, `status` para todos os eventos) sejam exibidos corretamente nas tabelas e dashboards do frontend.
+    *   Considerar a adição de visualizações ou relatórios mais detalhados para tipos de eventos específicos (por exemplo, carrinhos abandonados, reembolsos).
