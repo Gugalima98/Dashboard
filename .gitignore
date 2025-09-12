@@ -1,3 +1,4 @@
 node_modules/\
 .env\
 dist/
+analytics-backend/tokens.db
