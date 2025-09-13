@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PrivacyProvider } from "@/contexts/PrivacyContext";
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Index from "./pages/Index";
@@ -23,6 +24,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <PrivacyProvider>
     <TooltipProvider>
       <Toaster />
       <SonnerToaster />
@@ -47,6 +49,7 @@ const App = () => (
         </Routes>
       </AppLayout>
     </TooltipProvider>
+  </PrivacyProvider>
   </QueryClientProvider>
 );
 

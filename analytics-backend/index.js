@@ -19,7 +19,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors({
-  origin: 'http://localhost:8080',
+  origin: 'https://dashboard.brunomedeiroseo.com.br',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
@@ -108,7 +108,7 @@ app.get('/auth/google/callback', async (req, res) => {
         (err) => { if (err) console.error('Erro ao salvar refresh_token:', err.message); }
       );
     }
-    res.redirect('http://localhost:8080/analytics?re-auth=true');
+    res.redirect('https://dashboard.brunomedeiroseo.com.br/analytics?re-auth=true');
   } catch (error) {
     console.error('Erro ao obter tokens:', error.message);
     res.status(500).send('Erro na autenticação.');

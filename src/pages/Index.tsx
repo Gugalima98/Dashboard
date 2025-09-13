@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { PrivateValue } from "@/components/ui/private-value";
 import { supabase } from "../lib/supabaseClient";
 
 
@@ -178,7 +179,7 @@ const Index = () => {
                     <DollarSign className="w-4 h-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">R$ {salesStats.netRevenueMonth.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    <div className="text-2xl font-bold"><PrivateValue value={salesStats.netRevenueMonth.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} prefix="R$ " /></div>
                 </CardContent>
             </Card>
             <Card className="card-elevated">
@@ -196,7 +197,7 @@ const Index = () => {
                     <TrendingUp className="w-4 h-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">R$ {salesStats.mrr.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    <div className="text-2xl font-bold"><PrivateValue value={salesStats.mrr.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} prefix="R$ " /></div>
                     <p className="text-xs text-muted-foreground">Receita Recorrente Mensal</p>
                 </CardContent>
             </Card>

@@ -44,7 +44,7 @@ const Analytics = () => {
   // Google Credentials states
   const [googleClientId, setGoogleClientId] = useState(() => localStorage.getItem('googleClientId') || '');
   const [googleClientSecret, setGoogleClientSecret] = useState(() => localStorage.getItem('googleClientSecret') || '');
-  const [googleRedirectUri, setGoogleRedirectUri] = useState(() => localStorage.getItem('googleRedirectUri') || 'http://localhost:3001/auth/google/callback');
+  const [googleRedirectUri, setGoogleRedirectUri] = useState(() => localStorage.getItem('googleRedirectUri') || '/auth/google/callback');
   const [isGoogleCredentialsOpen, setIsGoogleCredentialsOpen] = useState(false);
 
   // Date Range State
@@ -62,7 +62,7 @@ const Analytics = () => {
     const userId = await getUserId();
     if (!userId) return;
     try {
-      const response = await fetch(`http://localhost:3001/api/google/connection-status?user_id=${userId}`);
+      const response = await fetch(`/api/google/connection-status?user_id=${userId}`);
       const data = await response.json();
       setHasGoogleAccountConnected(data.connected);
       if (data.connected) {
@@ -77,7 +77,7 @@ const Analytics = () => {
     const userId = await getUserId();
     if (!userId) return;
     try {
-      const response = await fetch(`http://localhost:3001/api/sites?user_id=${userId}`);
+      const response = await fetch(`/api/sites?user_id=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch mapped sites');
       const data = await response.json();
       setSites(data);
@@ -95,7 +95,7 @@ const Analytics = () => {
     if (!userId) return;
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/analytics/data', {
+      const response = await fetch('/api/analytics/data', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -143,7 +143,7 @@ const Analytics = () => {
     localStorage.setItem('googleRedirectUri', googleRedirectUri);
 
     try {
-      const response = await fetch('http://localhost:3001/auth/google', {
+      const response = await fetch('/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -166,8 +166,8 @@ const Analytics = () => {
     if (!userId) return;
     try {
       const [ga4Res, gscRes] = await Promise.all([
-        fetch(`http://localhost:3001/api/google/ga4-properties?user_id=${userId}`),
-        fetch(`http://localhost:3001/api/google/gsc-sites?user_id=${userId}`)
+        fetch(`/api/google/ga4-properties?user_id=${userId}`),
+        fetch(`/api/google/gsc-sites?user_id=${userId}`)
       ]);
       if (!ga4Res.ok || !gscRes.ok) throw new Error('Failed to fetch Google properties');
       const ga4Data = await ga4Res.json();
@@ -187,7 +187,7 @@ const Analytics = () => {
         return;
     }
     try {
-        const response = await fetch('http://localhost:3001/api/sites/mappings', {
+        const response = await fetch('/api/sites/mappings', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -213,7 +213,7 @@ const Analytics = () => {
     const userId = await getUserId();
     if (!userId) return;
     try {
-        const response = await fetch(`http://localhost:3001/api/sites/mappings/${mappingId}`, {
+        const response = await fetch(`/api/sites/mappings/${mappingId}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: userId })

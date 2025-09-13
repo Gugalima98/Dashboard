@@ -5,6 +5,7 @@ import { ModeToggle } from "@/components/ThemeToggle";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
+import { PrivacyToggle } from "@/components/ui/privacy-toggle";
 import { supabase } from "@/lib/supabaseClient";
 
 interface AppLayoutProps {
@@ -99,7 +100,8 @@ export function AppLayout({ children }: AppLayoutProps) {
       
       <main className="flex-1 overflow-y-auto"> {/* Adjust padding for mobile header */}
         {/* Desktop Toggle Button */}
-        <div className="absolute top-4 right-4 z-50 hidden md:block"> {/* Only visible on desktop */}
+        <div className="absolute top-4 right-4 z-50 hidden md:flex md:gap-2 md:items-center"> {/* Only visible on desktop */}
+          <PrivacyToggle />
           <ModeToggle />
         </div>
 
