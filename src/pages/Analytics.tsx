@@ -18,6 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
+import { PrivateValue } from "@/components/ui/private-value";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabaseClient";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
@@ -27,7 +28,7 @@ import { addDays } from "date-fns";
 const Analytics = () => {
   const [selectedMappingId, setSelectedMappingId] = useState<string | null>(null);
   const [sites, setSites] = useState<any[]>([]);
-  const [overviewData, setOverviewData] = useState({ pageviews: 0, visitors: 0, clicks: 0, impressions: 0, ctr: 0, position: 0, mostVisitedPages: [], devices: [] });
+  const [overviewData, setOverviewData] = useState({ pageviews: 0, visitors: 0, clicks: 0, impressions: 0, ctr: 0, position: 0, mostVisitedPages: [], devices: [], topKeywords: [] });
   const [previousOverviewData, setPreviousOverviewData] = useState(null);
   const [hasGoogleAccountConnected, setHasGoogleAccountConnected] = useState(false);
   const { toast } = useToast();
@@ -378,6 +379,48 @@ const Analytics = () => {
             </CardContent>
           </Card>
         </div>
+
+        <div className="grid gap-6">
+          <Card className="card-elevated">
+            <CardHeader>
+              <CardTitle>Palavras-chave Mais Acessadas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {overviewData && overviewData.topKeywords && overviewData.topKeywords.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Palavra-chave</TableHead>
+                      <TableHead className="text-right">Clicks</TableHead>
+                      <TableHead className="text-right">Impressões</TableHead>
+                      <TableHead className="text-right">CTR</TableHead>
+                      <TableHead className="text-right">Posição</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {overviewData.topKeywords.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium truncate max-w-[200px]">{item.keyword}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <PrivateValue value={item.clicks.toLocaleString()} />
+                            <Progress value={overviewData.topKeywords[0].clicks > 0 ? (item.clicks / overviewData.topKeywords[0].clicks) * 100 : 0} className="w-16 h-2" />
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right"><PrivateValue value={item.impressions.toLocaleString()} /></TableCell>
+                        <TableCell className="text-right"><PrivateValue value={`${(item.ctr * 100).toFixed(1)}%`} /></TableCell>
+                        <TableCell className="text-right"><PrivateValue value={item.position.toFixed(1)} /></TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <p className="text-muted-foreground">Nenhum dado disponível.</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
       <Dialog open={isManageSitesOpen} onOpenChange={setIsManageSitesOpen}>
         <DialogContent className="max-w-3xl">
           <DialogHeader><DialogTitle>Gerenciar Sites Mapeados</DialogTitle><DialogDescription>Associe uma propriedade do Google Analytics a um site do Search Console para unificar os dados.</DialogDescription></DialogHeader>

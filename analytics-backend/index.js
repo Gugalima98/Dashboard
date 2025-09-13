@@ -235,7 +235,7 @@ app.post('/api/analytics/data', async (req, res) => {
         const formattedStartDate = startDate;
         const formattedEndDate = endDate;
 
-        let overviewData = { pageviews: 0, visitors: 0, clicks: 0, impressions: 0, ctr: 0, position: 0, mostVisitedPages: [], devices: [] };
+        let overviewData = { pageviews: 0, visitors: 0, clicks: 0, impressions: 0, ctr: 0, position: 0, mostVisitedPages: [], devices: [], topKeywords: [] };
 
         try {
           const gaResponse = await analyticsdata.properties.runReport({
@@ -304,6 +304,28 @@ app.post('/api/analytics/data', async (req, res) => {
           overviewData.position = gscRow?.position || 0;
         } catch (gscErr) {
           console.error('Erro ao buscar dados GSC:', gscErr.message);
+        }
+
+        try {
+          const keywordsResponse = await searchconsole.searchanalytics.query({
+            siteUrl: mappingRow.gsc_site_url,
+            requestBody: {
+              startDate: formattedStartDate,
+              endDate: formattedEndDate,
+              dimensions: ['query'],
+              rowLimit: 10,
+            },
+          });
+          overviewData.topKeywords = keywordsResponse.data.rows?.map(row => ({
+            keyword: row.keys[0],
+            clicks: row.clicks || 0,
+            impressions: row.impressions || 0,
+            ctr: row.ctr || 0,
+            position: row.position || 0,
+          })) || [];
+        } catch (keywordsErr) {
+          console.error('Erro ao buscar palavras-chave GSC:', keywordsErr.message);
+          overviewData.topKeywords = [];
         }
 
                 res.json(overviewData);
